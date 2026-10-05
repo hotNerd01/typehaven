@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TypeHaven — Minimal Typing Test</title>
+  <meta name="description" content="A clean, highly customizable typing test inspired by Monkeytype. Themes, modes, personal bests, sound effects, and social sharing." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body class="theme-serika">
+  <div id="app">
+    <header class="header">
+      <div class="logo" onclick="restart()">
+        <span class="logo-icon">⌨</span>
+        <span class="logo-text">typehaven</span>
+      </div>
+      <nav class="nav">
+        <button class="nav-btn active" data-view="test">test</button>
+        <button class="nav-btn" data-view="themes">themes</button>
+        <button class="nav-btn" data-view="settings">settings</button>
+        <button class="nav-btn" data-view="pbs">pbs</button>
+        <button class="nav-btn" data-view="about">about</button>
+      </nav>
+    </header>
+
+    <main id="view-test" class="view active">
+      <div class="config">
+        <div class="config-group">
+          <button class="cfg-btn active" data-mode="time">time</button>
+          <button class="cfg-btn" data-mode="words">words</button>
+          <button class="cfg-btn" data-mode="quote">quote</button>
+          <button class="cfg-btn" data-mode="code">code</button>
+          <button class="cfg-btn" data-mode="numbers">numbers</button>
+          <button class="cfg-btn" data-mode="zen">zen</button>
+        </div>
+        <div class="config-group" id="time-options">
+          <button class="cfg-btn" data-time="15">15</button>
+          <button class="cfg-btn active" data-time="30">30</button>
+          <button class="cfg-btn" data-time="60">60</button>
+          <button class="cfg-btn" data-time="120">120</button>
+        </div>
+        <div class="config-group hidden" id="words-options">
+          <button class="cfg-btn" data-words="10">10</button>
+          <button class="cfg-btn active" data-words="25">25</button>
+          <button class="cfg-btn" data-words="50">50</button>
+          <button class="cfg-btn" data-words="100">100</button>
+        </div>
+      </div>
+
+      <div class="live-stats">
+        <div class="stat"><span class="stat-label">wpm</span><span class="stat-value" id="live-wpm">0</span></div>
+        <div class="stat"><span class="stat-label">acc</span><span class="stat-value" id="live-acc">100</span></div>
+        <div class="stat" id="timer-stat"><span class="stat-label">time</span><span class="stat-value" id="live-time">30</span></div>
+      </div>
+
+      <div class="typing-area" id="typing-area">
+        <div class="words" id="words"></div>
+        <input type="text" id="input" class="hidden-input" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+      </div>
+
+      <div class="hint"><kbd>tab</kbd> + <kbd>enter</kbd> — restart</div>
+
+      <div id="results" class="results hidden">
+        <div class="results-grid">
+          <div class="result-card"><div class="result-label">wpm</div><div class="result-value" id="res-wpm">0</div></div>
+          <div class="result-card"><div class="result-label">acc</div><div class="result-value" id="res-acc">0%</div></div>
+          <div class="result-card"><div class="result-label">raw</div><div class="result-value" id="res-raw">0</div></div>
+          <div class="result-card"><div class="result-label">time</div><div class="result-value" id="res-time">0s</div></div>
+        </div>
+        <div class="share-row">
+          <button class="share-btn" id="share-x">𝕏 Share</button>
+          <button class="share-btn" id="share-copy">Copy</button>
+          <button class="share-btn" id="share-discord">Discord</button>
+        </div>
+        <button class="restart-btn" onclick="restart()">restart</button>
+      </div>
+    </main>
+
+    <main id="view-themes" class="view">
+      <h2 class="view-title">Themes</h2>
+      <p class="view-desc">Click a theme to apply. Saved automatically.</p>
+      <div class="theme-grid" id="theme-grid"></div>
+      <div class="custom-theme">
+        <h3>Custom Theme</h3>
+        <div class="color-inputs">
+          <label>Background <input type="color" id="c-bg" value="#323437" /></label>
+          <label>Main / Caret <input type="color" id="c-main" value="#e2b714" /></label>
+          <label>Text <input type="color" id="c-text" value="#d1d0c5" /></label>
+          <label>Sub Text <input type="color" id="c-sub" value="#646669" /></label>
+          <label>Error <input type="color" id="c-error" value="#ca4754" /></label>
+        </div>
+        <button class="cfg-btn" onclick="applyCustomTheme()">Apply Custom</button>
+      </div>
+    </main>
+
+    <main id="view-settings" class="view">
+      <h2 class="view-title">Settings</h2>
+      <p class="view-desc">Sound effects and caret appearance. Saved automatically.</p>
+
+      <div class="settings-section">
+        <h3>Sound</h3>
+        <div class="setting-row">
+          <label class="toggle-label">
+            <input type="checkbox" id="sound-enabled" checked />
+            <span>Enable sound effects</span>
+          </label>
+        </div>
+        <div class="setting-row">
+          <label>Volume</label>
+          <input type="range" id="sound-volume" min="0" max="100" value="40" />
+          <span id="volume-val">40%</span>
+        </div>
+        <div class="setting-row">
+          <button class="cfg-btn" onclick="playTestSound()">Test click</button>
+          <button class="cfg-btn" onclick="playErrorSound()">Test error</button>
+          <button class="cfg-btn" onclick="playFinishSound()">Test finish</button>
+        </div>
+      </div>
+
+      <div class="settings-section">
+        <h3>Caret</h3>
+        <div class="setting-row">
+          <label>Style</label>
+          <div class="config-group" id="caret-style-group">
+            <button class="cfg-btn active" data-caret="bar">bar</button>
+            <button class="cfg-btn" data-caret="block">block</button>
+            <button class="cfg-btn" data-caret="underline">underline</button>
+            <button class="cfg-btn" data-caret="outline">outline</button>
+            <button class="cfg-btn" data-caret="off">off</button>
+          </div>
+        </div>
+        <div class="setting-row">
+          <label class="toggle-label">
+            <input type="checkbox" id="caret-smooth" />
+            <span>Smooth caret movement</span>
+          </label>
+        </div>
+        <div class="setting-row">
+          <label class="toggle-label">
+            <input type="checkbox" id="caret-blink" checked />
+            <span>Blink animation</span>
+          </label>
+        </div>
+      </div>
+    </main>
+
+    <main id="view-pbs" class="view">
+      <h2 class="view-title">Personal Bests</h2>
+      <p class="view-desc">Stored in your browser. Clear anytime.</p>
+      <div id="pb-list" class="pb-list"></div>
+      <button class="cfg-btn danger" onclick="clearPBs()">Clear all PBs</button>
+    </main>
+
+    <main id="view-about" class="view">
+      <h2 class="view-title">About TypeHaven</h2>
+      <div class="about-content">
+        <p>A minimal, distraction-free typing test inspired by Monkeytype’s clean design.</p>
+        <ul>
+          <li>Modes: time, words, quotes, code, numbers, zen</li>
+          <li>Live WPM & accuracy</li>
+          <li>10+ themes + full custom theme editor</li>
+          <li>Sound effects & multiple caret styles</li>
+          <li>Personal bests in localStorage</li>
+          <li>One-click share to X / Discord / clipboard</li>
+          <li>Keyboard-first (Tab + Enter to restart)</li>
+        </ul>
+        <p>Deploy to Netlify or Vercel as a static site. Real social auto-post (OAuth) can be added later.</p>
+      </div>
+    </main>
+  </div>
+  <script src="app.js"></script>
+</body>
+</html>
